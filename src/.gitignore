@@ -1,0 +1,34 @@
+# Compiled source files
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# Build directories
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.swp
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# MacOS
+.DS_Store
+
+# Sensitive files
+.env
+
+# Logs
+*.log
+
+# Rider
+.idea/
+*.iml
+
+# Other
+*.db
