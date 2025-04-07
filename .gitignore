@@ -32,3 +32,5 @@ obj/
 
 # Other
 *.db
+/src/.vs
+/.vs
