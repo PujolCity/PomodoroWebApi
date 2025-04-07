@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PomodoroWebApp.Domain.Entities;
 using PomodoroWebApp.Domain.Enums;
 
 namespace PomodoroWebApp.Infrastructure.Data;
 
-public class PomodoroDbContext : DbContext
+public class PomodoroDbContext : IdentityDbContext<Usuario, IdentityRole<int>, int>
 {
     public PomodoroDbContext(DbContextOptions<PomodoroDbContext> options)
         : base(options) { }
@@ -20,6 +22,8 @@ public class PomodoroDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         // Configuración Usuario
         modelBuilder.Entity<Usuario>()
             .HasMany(u => u.Proyectos)
@@ -52,12 +56,14 @@ public class PomodoroDbContext : DbContext
         modelBuilder.Entity<Sesion>()
             .HasOne(s => s.DescansoCorto)
             .WithOne()
-            .HasForeignKey<SesionDescanso>(sd => sd.Id);
+            .HasForeignKey<SesionDescanso>(sd => sd.Id)
+            .OnDelete(DeleteBehavior.NoAction);  // Cambié a NoAction
 
         modelBuilder.Entity<Sesion>()
             .HasOne(s => s.DescansoLargo)
             .WithOne()
-            .HasForeignKey<SesionDescanso>(sd => sd.Id);
+            .HasForeignKey<SesionDescanso>(sd => sd.Id)
+            .OnDelete(DeleteBehavior.NoAction);  // Cambié a NoAction
 
         // Configuración PomodoroSesion (herencia)
         modelBuilder.Entity<PomodoroSesion>()

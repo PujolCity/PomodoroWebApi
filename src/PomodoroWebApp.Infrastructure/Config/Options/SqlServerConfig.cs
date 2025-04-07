@@ -1,4 +1,4 @@
-﻿namespace PomodoroWebApp.Infrastructure.Options;
+﻿namespace PomodoroWebApp.Infrastructure.Config.Options;
 
 public class SqlServerConfig
 {

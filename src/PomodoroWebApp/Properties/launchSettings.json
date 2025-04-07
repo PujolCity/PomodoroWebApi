@@ -57,5 +57,8 @@
       "applicationUrl": "http://localhost:22832",
       "sslPort": 44343
     }
+  },
+  "environmentVariables": {
+    "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT": "0"
   }
 }
