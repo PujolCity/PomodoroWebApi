@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace PomodoroWebApp.Infrastructure.Options;
+namespace PomodoroWebApp.Infrastructure.Config.Options;
 
 public class AppConfig
 {

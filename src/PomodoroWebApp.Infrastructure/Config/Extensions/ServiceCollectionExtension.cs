@@ -1,28 +1,41 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PomodoroWebApp.Application.Interactor;
+using PomodoroWebApp.Application.Interfaces.Interactor;
+using PomodoroWebApp.Application.Services;
+using PomodoroWebApp.Domain.Entities;
+using PomodoroWebApp.Domain.Interfaces.Repositories;
+using PomodoroWebApp.Domain.Interfaces.Services;
+using PomodoroWebApp.Infrastructure.Config.InitializationExtensions;
+using PomodoroWebApp.Infrastructure.Config.Options;
 using PomodoroWebApp.Infrastructure.Data;
-using PomodoroWebApp.Infrastructure.InitializationExtensions;
+using PomodoroWebApp.Infrastructure.Data.Repositories;
+using PomodoroWebApp.Infrastructure.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Text;
 
 
-namespace PomodoroWebApp.Infrastructure.Extensions;
+namespace PomodoroWebApp.Infrastructure.Config.Extensions;
 
 public static class ServiceCollectionExtension
 {
     public static IServiceCollection ConfigureInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDatabaseConfiguration(configuration);
-        services.AddDAOInjections();
+        services.AddDataAccessInjections();
         services.AddServicesInjections();
         services.AddInteractorsInjections();
+        services.AddIdentityConfiguration(configuration);
+        services.AddSecurityPolicies();
+        services.AddDatabaseConfiguration(configuration);
         services.AddJwtAuthentication(configuration);
         services.AddSwagger();
         //services.AddRedisConfiguration(configuration);
@@ -40,6 +53,66 @@ public static class ServiceCollectionExtension
         {
             option.GroupNameFormat = "'v'V";
             option.SubstituteApiVersionInUrl = true;
+        });
+
+        return services;
+    }
+
+    private static IServiceCollection AddIdentityConfiguration(this IServiceCollection services, IConfiguration configuration)
+    {
+        var identityConfig = configuration.GetOptions<IdentityConfig>("IdentityConfig");
+
+        services.AddIdentity<Usuario, IdentityRole<int>>(options =>
+        {
+            // Configuración de contraseña
+            options.Password.RequireDigit = identityConfig.Password.RequireDigit;
+            options.Password.RequiredLength = identityConfig.Password.RequiredLength;
+            options.Password.RequireNonAlphanumeric = identityConfig.Password.RequireNonAlphanumeric;
+            options.Password.RequireUppercase = identityConfig.Password.RequireUppercase;
+            options.Password.RequireLowercase = identityConfig.Password.RequireLowercase;
+
+            // Configuración de usuario
+            options.User.RequireUniqueEmail = identityConfig.User.RequireUniqueEmail;
+
+            // Configuración de bloqueo
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(identityConfig.Lockout.DefaultLockoutTimeInMinutes);
+            options.Lockout.MaxFailedAccessAttempts = identityConfig.Lockout.MaxFailedAccessAttempts;
+        })
+        .AddEntityFrameworkStores<PomodoroDbContext>()
+        .AddDefaultTokenProviders();
+
+        // Configuración de cookies seguras
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.Cookie.HttpOnly = true;
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(identityConfig.Cookie.ExpireTimeInMinutes);
+            options.LoginPath = "/Account/Login";
+            options.AccessDeniedPath = "/Account/AccessDenied";
+            options.SlidingExpiration = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        });
+
+        return services;
+    }
+
+    private static IServiceCollection AddSecurityPolicies(this IServiceCollection services)
+    {
+        services.AddAuthorization(options =>
+        {
+            // Política para usuarios autenticados
+            options.AddPolicy("AuthenticatedUser", policy =>
+                policy.RequireAuthenticatedUser());
+
+            // Política para administradores
+            options.AddPolicy("AdminOnly", policy =>
+                policy.RequireRole("Admin"));
+
+            // Política para tokens JWT válidos
+            options.AddPolicy("ValidToken", policy =>
+            {
+                policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                policy.RequireAuthenticatedUser();
+            });
         });
 
         return services;
@@ -70,13 +143,14 @@ public static class ServiceCollectionExtension
 
     private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var optionsConfig = configuration.GetOptions();
+        var jwtConfig = configuration.GetOptions<JwtConfig>("JwtConfig");
 
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
+        })
+        .AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -84,13 +158,25 @@ public static class ServiceCollectionExtension
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = optionsConfig.JwtConfig.Issuer,
-                ValidAudience = optionsConfig.JwtConfig.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(optionsConfig.JwtConfig.Secret))
+                ValidIssuer = jwtConfig.Issuer,
+                ValidAudience = jwtConfig.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Secret)),
+                ClockSkew = TimeSpan.Zero // Eliminar margen de tiempo para expiración
+            };
+
+            // Para manejar eventos del token
+            options.Events = new JwtBearerEvents
+            {
+                OnAuthenticationFailed = context =>
+                {
+                    if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                    {
+                        context.Response.Headers.Add("Token-Expired", "true");
+                    }
+                    return Task.CompletedTask;
+                }
             };
         });
-
-        services.AddAuthorization();
 
         return services;
     }
@@ -171,18 +257,41 @@ public static class ServiceCollectionExtension
         return info;
     }
 
-    private static IServiceCollection AddDAOInjections(this IServiceCollection services)
+    private static IServiceCollection AddDataAccessInjections(this IServiceCollection services)
     {
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
         return services;
     }
 
     private static IServiceCollection AddServicesInjections(this IServiceCollection services)
     {
+        services.AddScoped<IUserService, UserService>();
+
+        services.AddScoped<IIdentityService, IdentityService>();
+
         return services;
     }
 
     private static IServiceCollection AddInteractorsInjections(this IServiceCollection services)
     {
+        #region POST
+        services.AddScoped<IRegisterInteractor, RegisterInteractor>();
+
+        #endregion
+
+        #region GET
+        #endregion
+
+        #region PUT
+        #endregion
+
+        #region DELETE
+        #endregion
+
         return services;
     }
 

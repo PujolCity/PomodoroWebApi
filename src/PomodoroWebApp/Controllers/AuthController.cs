@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using PomodoroWebApp.Application.Dto;
+using PomodoroWebApp.Application.Interfaces.Interactor;
 
 namespace PomodoroWebApp.Controllers;
 
@@ -11,6 +13,12 @@ namespace PomodoroWebApp.Controllers;
 [ApiVersion("1.0")]
 public class AuthController : ControllerBase
 {
+    private readonly IRegisterInteractor _registerInteractor;
+
+    public AuthController(IRegisterInteractor registerInteractor)
+    {
+        _registerInteractor = registerInteractor;
+    }
 
     [HttpGet("me")]
     public async Task<IActionResult> GetMyProfile()
@@ -25,24 +33,15 @@ public class AuthController : ControllerBase
         return Ok(user);
     }
 
-
-    [HttpPost("register")] // No requiere token
+    [HttpPost("register")]
     [AllowAnonymous]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    public async Task<IActionResult> Register([FromBody] RegisterRequestDTO request)
     {
-        var result = new
-        {
-            Success = true,
-            Message = "todo ok"
-        };
-
-        if (!result.Success)
-            return BadRequest(result.Message);
-
-        return Ok(result.Message);
+        var result = await _registerInteractor.Execute(request);
+        return result.IsSuccess ? Ok() : BadRequest(result.Errors);
     }
 
-    [HttpPost("login")] // No requiere token
+    [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {

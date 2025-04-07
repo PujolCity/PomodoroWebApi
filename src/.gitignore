@@ -5,8 +5,8 @@
 *.cache
 
 # Build directories
-bin/
-obj/
+**/bin/
+**/obj/
 
 # User-specific files
 *.user
@@ -32,3 +32,6 @@ obj/
 
 # Other
 *.db
+
+# Visual Studio temporary files
+.vs/

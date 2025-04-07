@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using PomodoroWebApp.Infrastructure.Options;
+using PomodoroWebApp.Infrastructure.Config.Options;
 
-namespace PomodoroWebApp.Infrastructure.InitializationExtensions;
+namespace PomodoroWebApp.Infrastructure.Config.InitializationExtensions;
 
 
 public static class ConfigurationLoadExtensions

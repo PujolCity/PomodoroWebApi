@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using PomodoroWebApp.Infrastructure.Data;
 
-namespace PomodoroWebApp.Infrastructure.Factories;
+namespace PomodoroWebApp.Infrastructure.Config.Factories;
 
 public class PomodoroDbContextFactory : IDesignTimeDbContextFactory<PomodoroDbContext>
 {
