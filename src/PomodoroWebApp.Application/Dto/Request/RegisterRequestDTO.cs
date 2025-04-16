@@ -1,4 +1,4 @@
-﻿namespace PomodoroWebApp.Application.Dto;
+﻿namespace PomodoroWebApp.Application.Dto.Request;
 
 public class RegisterRequestDTO
 {

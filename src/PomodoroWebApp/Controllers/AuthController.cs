@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using PomodoroWebApp.Application.Dto;
+using PomodoroWebApp.Application.Dto.Request;
 using PomodoroWebApp.Application.Interfaces.Interactor;
+using PomodoroWebApp.Domain.Interfaces.Services;
 
 namespace PomodoroWebApp.Controllers;
 
@@ -14,22 +15,27 @@ namespace PomodoroWebApp.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IRegisterInteractor _registerInteractor;
+    private readonly ILoginInteractor _loginInteractor;
+    private readonly IAuthorizationTokenService _authorizationTokenService;
 
-    public AuthController(IRegisterInteractor registerInteractor)
+    public AuthController(IRegisterInteractor registerInteractor,
+        ILoginInteractor loginInteractor,
+        IAuthorizationTokenService authorizationTokenService)
     {
         _registerInteractor = registerInteractor;
+        _loginInteractor = loginInteractor;
+        _authorizationTokenService = authorizationTokenService;
     }
 
     [HttpGet("me")]
     public async Task<IActionResult> GetMyProfile()
     {
         // Obtiene el ID del usuario desde el token JWT
-        var userId = User.FindFirst("id")?.Value;
+        var user = _authorizationTokenService.GetAllClaims();
 
-        if (userId == null)
+        if (user == null)
             return Unauthorized("No se pudo encontrar el ID del usuario en el token.");
 
-        var user = Guid.Parse(userId);
         return Ok(user);
     }
 
@@ -43,18 +49,13 @@ public class AuthController : ControllerBase
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequestDTO request)
     {
-        var result = new
-        {
-            Success = true,
-            Message = "todo ok",
-            Data = "TODA LA DATA"
-        };
+        var result = await _loginInteractor.Execute(request);
 
-        if (!result.Success)
-            return Unauthorized(result.Message);
+        if (result.IsFailed)
+            return Unauthorized(result.Errors);
 
-        return Ok(result.Data);
+        return Ok(result.Value);
     }
 }

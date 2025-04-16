@@ -19,10 +19,55 @@ public class PomodoroDbContext : IdentityDbContext<Usuario, IdentityRole<int>, i
     public DbSet<PomodoroSesion> PomodoroSesiones { get; set; }
     public DbSet<SesionTrabajo> SesionesTrabajo { get; set; }
     public DbSet<SesionDescanso> SesionesDescanso { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasKey(rt => rt.Id);
+
+            entity.Property(rt => rt.Token)
+                .IsRequired()
+                .HasMaxLength(128);
+
+            entity.Property(rt => rt.JwtId)
+                .IsRequired()
+                .HasMaxLength(128);
+
+            entity.Property(rt => rt.CreationDate)
+                .IsRequired();
+
+            entity.Property(rt => rt.ExpiryDate)
+                .IsRequired();
+
+            entity.Property(rt => rt.Used)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            entity.Property(rt => rt.Invalidated)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            // Relación con Usuario
+            entity.HasOne(rt => rt.User)
+                .WithMany()
+                .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Eliminar tokens cuando se borra el usuario
+        });
+
+        modelBuilder.Entity<RefreshToken>()
+            .HasIndex(rt => rt.Token)
+            .IsUnique();
+
+        modelBuilder.Entity<RefreshToken>()
+            .HasIndex(rt => rt.JwtId);
+
+        modelBuilder.Entity<RefreshToken>()
+            .HasIndex(rt => rt.UserId);
 
         // Configuración Usuario
         modelBuilder.Entity<Usuario>()

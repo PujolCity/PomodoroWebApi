@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using PomodoroWebApp.Domain.Entities;
-using PomodoroWebApp.Domain.Interfaces.Repositories;
 using PomodoroWebApp.Domain.Interfaces.Services;
 using PomodoroWebApp.Domain.Results;
 using PomodoroWebApp.Domain.ValidatorMessages;
@@ -14,26 +13,6 @@ public class UserService : IUserService
     public UserService(UserManager<Usuario> userManager)
     {
         _userManager = userManager;
-    }
-
-    public async Task<Result<Usuario>> RegistrarUsuarioAsync(Usuario usuario, string password)
-    {
-        try
-        {
-            var result = await _userManager.CreateAsync(usuario, password);
-
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                return Result<Usuario>.Fail($"Error al registrar usuario: {errors}");
-            }
-
-            return Result<Usuario>.Ok(usuario);
-        }
-        catch (Exception ex)
-        {
-            return Result<Usuario>.Fail($"Exception: {ex.Message}");
-        }
     }
 
     public async Task<Result<bool>> EmailExistsAsync(string email)
