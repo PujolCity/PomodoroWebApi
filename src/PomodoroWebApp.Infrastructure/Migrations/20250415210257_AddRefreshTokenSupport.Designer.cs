@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PomodoroWebApp.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using PomodoroWebApp.Infrastructure.Data;
 namespace PomodoroWebApp.Infrastructure.Migrations
 {
     [DbContext(typeof(PomodoroDbContext))]
-    partial class PomodoroDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250415210257_AddRefreshTokenSupport")]
+    partial class AddRefreshTokenSupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

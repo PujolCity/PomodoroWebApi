@@ -46,10 +46,13 @@
         "ASPNETCORE_ENVIRONMENT": "PROD"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7181;http://localhost:5231"
+      "applicationUrl": "https://localhost:7080;http://localhost:5030"
     }
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
+  "environmentVariables": {
+    "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT": "0"
+  },
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -57,8 +60,5 @@
       "applicationUrl": "http://localhost:22832",
       "sslPort": 44343
     }
-  },
-  "environmentVariables": {
-    "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT": "0"
   }
 }

@@ -9,7 +9,7 @@ public class PomodoroDbContextFactory : IDesignTimeDbContextFactory<PomodoroDbCo
 {
     public PomodoroDbContext CreateDbContext(string[] args)
     {
-        var environment = /*Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? */"PROD";
+        var environment = /*Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? */"DESARROLLO";
         Console.WriteLine($"ASPNETCORE_ENVIRONMENT String: {environment}");
 
         var configuration = new ConfigurationBuilder()

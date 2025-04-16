@@ -1,4 +1,4 @@
-﻿using PomodoroWebApp.Application.Dto;
+﻿using PomodoroWebApp.Application.Dto.Request;
 using PomodoroWebApp.Domain.Entities;
 
 namespace PomodoroWebApp.Application.Extensions;

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PomodoroWebApp.Application.Interactor;
@@ -30,6 +31,7 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection ConfigureInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddDataAccessInjections();
         services.AddServicesInjections();
         services.AddInteractorsInjections();
@@ -273,13 +275,17 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IIdentityService, IdentityService>();
 
+        services.AddScoped<IAuthorizationTokenService, AuthorizationTokenService>();
+
         return services;
     }
 
     private static IServiceCollection AddInteractorsInjections(this IServiceCollection services)
     {
         #region POST
+
         services.AddScoped<IRegisterInteractor, RegisterInteractor>();
+        services.AddScoped<ILoginInteractor, LoginInteractor>();
 
         #endregion
 

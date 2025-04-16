@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using PomodoroWebApp.Application.Dto;
+using PomodoroWebApp.Application.Dto.Request;
 using PomodoroWebApp.Domain.Entities;
 using PomodoroWebApp.Domain.Interfaces.Repositories;
 

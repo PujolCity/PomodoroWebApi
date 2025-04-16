@@ -1,9 +1,9 @@
-﻿using PomodoroWebApp.Application.Dto;
+﻿using PomodoroWebApp.Application.Dto.Request;
 using PomodoroWebApp.Domain.Results;
 
 namespace PomodoroWebApp.Application.Interfaces.Interactor;
 
 public interface IRegisterInteractor
 {
-    Task<Result<int>> Execute(RegisterRequestDTO request);
+    Task<Result<bool>> Execute(RegisterRequestDTO request);
 }
