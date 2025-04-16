@@ -1,4 +1,4 @@
-﻿using PomodoroWebApp.Application.Dto.Request;
+﻿using PomodoroWebApp.Application.Dto.Auth;
 using PomodoroWebApp.Domain.Models;
 using PomodoroWebApp.Domain.Results;
 

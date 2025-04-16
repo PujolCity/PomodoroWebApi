@@ -1,4 +1,4 @@
-﻿namespace PomodoroWebApp.Application.Dto.Request;
+﻿namespace PomodoroWebApp.Application.Dto.Auth;
 
 public class LoginRequestDTO
 {
