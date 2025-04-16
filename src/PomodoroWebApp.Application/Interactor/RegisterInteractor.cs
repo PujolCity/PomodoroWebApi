@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using PomodoroWebApp.Application.Dto.Request;
+using PomodoroWebApp.Application.Dto.Auth;
 using PomodoroWebApp.Application.Extensions;
 using PomodoroWebApp.Application.Interfaces.Interactor;
 using PomodoroWebApp.Domain.Interfaces.Services;

@@ -1,8 +1,7 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using PomodoroWebApp.Application.Dto.Request;
+using PomodoroWebApp.Application.Dto.Auth;
 using PomodoroWebApp.Application.Interfaces.Interactor;
 using PomodoroWebApp.Domain.Interfaces.Services;
 
