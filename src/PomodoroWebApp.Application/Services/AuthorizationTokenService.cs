@@ -4,6 +4,9 @@ using System.Security.Claims;
 
 namespace PomodoroWebApp.Application.Services;
 
+/// <summary>
+/// Servicio para manejar el token de autorización.
+/// </summary>
 public class AuthorizationTokenService : IAuthorizationTokenService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;

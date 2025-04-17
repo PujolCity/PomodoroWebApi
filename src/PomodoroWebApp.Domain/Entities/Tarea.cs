@@ -2,6 +2,9 @@
 
 namespace PomodoroWebApp.Domain.Entities;
 
+/// <summary>
+/// Clase que representa una tarea.
+/// </summary>
 public class Tarea
 {
     public int Id { get; set; }

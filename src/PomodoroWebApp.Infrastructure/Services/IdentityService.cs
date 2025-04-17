@@ -16,6 +16,9 @@ using System.Text;
 
 namespace PomodoroWebApp.Infrastructure.Services;
 
+/// <summary>
+/// Servicio para manejar la identidad de los usuarios.
+/// </summary>
 public class IdentityService : IIdentityService
 {
     private readonly UserManager<Usuario> _userManager;
@@ -133,7 +136,6 @@ public class IdentityService : IIdentityService
         }
     }
 
-
     public async Task<Result<AuthResponse>> RefreshTokenAsync(string jwtToken, string refreshToken)
     {
         try
@@ -174,6 +176,12 @@ public class IdentityService : IIdentityService
         }
     }
 
+    /// <summary>
+    /// Obtiene el ClaimsPrincipal a partir de un token expirado.
+    /// </summary>
+    /// <param name="token"></param>
+    /// <param name="secret"></param>
+    /// <returns>ClaimsPrincipal extraído del token expirado si es válido; de lo contrario, <c>null</c>.</returns>
     private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token, string secret)
     {
         var tokenValidationParameters = new TokenValidationParameters
@@ -184,7 +192,7 @@ public class IdentityService : IIdentityService
             ValidIssuer = _jwtConfig.Issuer,
             ValidateAudience = true,
             ValidAudience = _jwtConfig.Audience,
-            ValidateLifetime = false, 
+            ValidateLifetime = false,
             ClockSkew = TimeSpan.Zero
         };
 

@@ -2,10 +2,12 @@
 
 namespace PomodoroWebApp.Domain.Interfaces.Repositories;
 
+/// <summary>
+/// Interfaz para el patrón Unit of Work.
+/// </summary>
 public interface IUnitOfWork : IDisposable
 {
     IUsuarioRepository Usuarios { get; }
     IRepository<Proyecto> Proyectos { get; }
-    // Agregar otros repositorios según tus entidades...
     Task<int> CommitAsync();
 }

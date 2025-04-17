@@ -1,5 +1,8 @@
 ﻿namespace PomodoroWebApp.Infrastructure.Config.Options;
 
+/// <summary>
+/// Configuración para el manejo de JWT.
+/// </summary>
 public class JwtConfig
 {
     public string Secret { get; set; }

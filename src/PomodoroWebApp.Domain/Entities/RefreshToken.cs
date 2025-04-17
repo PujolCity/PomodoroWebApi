@@ -1,5 +1,8 @@
 ﻿namespace PomodoroWebApp.Domain.Entities;
 
+/// <summary>
+/// Clase que representa un token de actualización.
+/// </summary>
 public class RefreshToken
 {
     public int Id { get; set; }

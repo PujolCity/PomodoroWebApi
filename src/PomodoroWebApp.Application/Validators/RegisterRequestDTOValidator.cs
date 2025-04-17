@@ -6,6 +6,9 @@ using PomodoroWebApp.Domain.Interfaces.Repositories;
 
 namespace PomodoroWebApp.Application.Validators;
 
+/// <summary>
+/// Validador para la solicitud de registro de un nuevo usuario.
+/// </summary>
 public class RegisterRequestDTOValidator : AbstractValidator<RegisterRequestDTO>
 {
     private readonly UserManager<Usuario> _userManager;

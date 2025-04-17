@@ -3,7 +3,9 @@ using PomodoroWebApp.Infrastructure.Config.Options;
 
 namespace PomodoroWebApp.Infrastructure.Config.InitializationExtensions;
 
-
+/// <summary>
+/// Extensiones para cargar configuraciones desde el archivo de configuración.
+/// </summary>
 public static class ConfigurationLoadExtensions
 {
     public static AppConfig GetOptions(this IConfiguration configuration) => new(configuration);

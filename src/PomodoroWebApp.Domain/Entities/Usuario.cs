@@ -2,6 +2,9 @@
 
 namespace PomodoroWebApp.Domain.Entities;
 
+/// <summary>
+/// Clase que representa un usuario del sistema.
+/// </summary>
 public class Usuario : IdentityUser<int>
 {
     public string Nombre { get; set; }

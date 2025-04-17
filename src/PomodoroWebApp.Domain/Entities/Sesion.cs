@@ -1,5 +1,8 @@
 ﻿namespace PomodoroWebApp.Domain.Entities;
 
+/// <summary>
+/// Representa una sesión de trabajo o descanso.
+/// </summary>
 public class Sesion
 {
     public int Id { get; set; }

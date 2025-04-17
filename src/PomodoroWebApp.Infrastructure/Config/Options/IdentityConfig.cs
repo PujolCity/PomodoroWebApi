@@ -1,5 +1,8 @@
 ﻿namespace PomodoroWebApp.Infrastructure.Config.Options;
 
+/// <summary>
+/// Configuración de identidad para la aplicación.
+/// </summary>
 public class IdentityConfig
 
 {
@@ -10,6 +13,10 @@ public class IdentityConfig
 
 }
 
+/// <summary>
+/// Configuración de la contraseña.
+/// </summary>
+
 public class PasswordConfig
 {
     public bool RequireDigit { get; set; } = true;
@@ -19,17 +26,27 @@ public class PasswordConfig
     public bool RequireLowercase { get; set; } = true;
 }
 
+/// <summary>
+/// Configuración del usuario.
+/// </summary>
+
 public class UserConfig
 {
     public bool RequireUniqueEmail { get; set; } = true;
 }
 
+/// <summary>
+/// Configuración del bloqueo.
+/// </summary>
 public class LockoutConfig
 {
     public int DefaultLockoutTimeInMinutes { get; set; } = 15;
     public int MaxFailedAccessAttempts { get; set; } = 5;
 }
 
+/// <summary>
+/// Configuración de la cookie.
+/// </summary>
 public class CookieConfig
 {
     public int ExpireTimeInMinutes { get; set; } = 60;

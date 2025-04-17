@@ -6,6 +6,9 @@ using PomodoroWebApp.Domain.Results;
 
 namespace PomodoroWebApp.Application.Interactor;
 
+/// <summary>
+/// Clase que implementa la lógica de negocio para el inicio de sesión.
+/// </summary>
 public class LoginInteractor : ILoginInteractor
 {
     private readonly IIdentityService _identityService;

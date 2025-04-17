@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Identity.Data;
 
 namespace PomodoroWebApp.Application.Validators;
 
+/// <summary>
+/// Validador para la solicitud de inicio de sesión.
+/// </summary>
 public class LoginRequestValidator : AbstractValidator<LoginRequest>
 {
     public LoginRequestValidator()

@@ -24,9 +24,11 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Text;
 
-
 namespace PomodoroWebApp.Infrastructure.Config.Extensions;
 
+/// <summary>
+/// Extension methods for configuring the service collection.
+/// </summary>
 public static class ServiceCollectionExtension
 {
     public static IServiceCollection ConfigureInfrastructure(this IServiceCollection services, IConfiguration configuration)
@@ -220,11 +222,14 @@ public static class ServiceCollectionExtension
 
             configuracion.DocumentFilter<ReplaceVersionWithExactValueInPathFilter>();
             configuracion.DescribeAllParametersInCamelCase();
-
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             if (File.Exists(xmlPath))
+            {
                 configuracion.IncludeXmlComments(xmlPath);
+                configuracion.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "PomodoroWebApp.xml"));
+                configuracion.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "PomodoroWebApp.Application.xml"));
+            }
         });
 
         return services;

@@ -6,6 +6,9 @@ using PomodoroWebApp.Domain.Enums;
 
 namespace PomodoroWebApp.Infrastructure.Data;
 
+/// <summary>
+/// Contexto de la base de datos para la aplicación Pomodoro.
+/// </summary>
 public class PomodoroDbContext : IdentityDbContext<Usuario, IdentityRole<int>, int>
 {
     public PomodoroDbContext(DbContextOptions<PomodoroDbContext> options)

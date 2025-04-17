@@ -1,5 +1,8 @@
 ﻿namespace PomodoroWebApp.Domain.Entities;
 
+/// <summary>
+/// Clase que representa las estadísticas de un usuario.
+/// </summary>
 public class EstadisticasUsuario
 {
     public int EstadisticasUsuarioId { get; set; }
