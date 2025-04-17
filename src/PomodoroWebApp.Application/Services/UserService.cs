@@ -6,6 +6,9 @@ using PomodoroWebApp.Domain.ValidatorMessages;
 
 namespace PomodoroWebApp.Application.Services;
 
+/// <summary>
+/// Implementación del servicio de usuario.
+/// </summary>
 public class UserService : IUserService
 {
     private readonly UserManager<Usuario> _userManager;

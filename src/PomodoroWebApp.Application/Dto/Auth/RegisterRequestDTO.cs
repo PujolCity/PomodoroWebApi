@@ -1,5 +1,8 @@
 ﻿namespace PomodoroWebApp.Application.Dto.Auth;
 
+/// <summary>
+/// DTO para la solicitud de registro de un nuevo usuario.
+/// </summary>
 public class RegisterRequestDTO
 {
     public required string Email { get; set; }

@@ -3,6 +3,9 @@ using PomodoroWebApp.Domain.Results;
 
 namespace PomodoroWebApp.Application.Extensions;
 
+/// <summary>
+/// Extensiones para convertir resultados de validación en resultados de dominio.
+/// </summary>
 public static class ResultExtensions
 {
     public static Result ToResult(this ValidationResult validationResult)

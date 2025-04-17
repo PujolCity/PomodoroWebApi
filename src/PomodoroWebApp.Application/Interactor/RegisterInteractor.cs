@@ -7,6 +7,9 @@ using PomodoroWebApp.Domain.Results;
 
 namespace PomodoroWebApp.Application.Interactor;
 
+/// <summary>
+/// Clase que implementa la lógica de negocio para el registro de usuarios.
+/// </summary>
 public class RegisterInteractor : IRegisterInteractor
 {
     private readonly IIdentityService _identityService;

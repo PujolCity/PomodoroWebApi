@@ -5,6 +5,9 @@ using PomodoroWebApp.Infrastructure.Data;
 
 namespace PomodoroWebApp.Infrastructure.Config.Factories;
 
+/// <summary>
+/// Fábrica de contexto de base de datos para el diseño.
+/// </summary>
 public class PomodoroDbContextFactory : IDesignTimeDbContextFactory<PomodoroDbContext>
 {
     public PomodoroDbContext CreateDbContext(string[] args)

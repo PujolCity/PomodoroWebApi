@@ -1,5 +1,8 @@
 ﻿namespace PomodoroWebApp.Extensions;
 
+/// <summary>
+/// Extensiones para la configuración del middleware de la aplicación.
+/// </summary>
 public static class ApplicationBuilderExtension
 {
     public static IApplicationBuilder Configure(this IApplicationBuilder app)

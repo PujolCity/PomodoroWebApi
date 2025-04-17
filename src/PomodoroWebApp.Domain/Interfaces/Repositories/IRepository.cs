@@ -2,6 +2,10 @@
 
 namespace PomodoroWebApp.Domain.Interfaces.Repositories;
 
+/// <summary>
+/// Interfaz genérica para el repositorio.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public interface IRepository<T> where T : class
 {
     Task<T?> GetByIdAsync(int id);

@@ -1,5 +1,8 @@
 ﻿namespace PomodoroWebApp.Domain.Entities;
 
+/// <summary>
+/// Clase que representa un proyecto.
+/// </summary>
 public class Proyecto
 {
     public int Id { get; set; }

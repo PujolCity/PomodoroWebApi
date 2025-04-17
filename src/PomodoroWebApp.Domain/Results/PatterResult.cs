@@ -1,6 +1,10 @@
 ﻿using FluentValidation.Results;
 
 namespace PomodoroWebApp.Domain.Results;
+
+/// <summary>
+/// Interfaz base para resultados.
+/// </summary>
 public interface IResultBase
 {
     bool IsSuccess { get; }
