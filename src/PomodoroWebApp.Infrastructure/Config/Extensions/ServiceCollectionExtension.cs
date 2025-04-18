@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PomodoroWebApp.Application.Interactor;
@@ -20,6 +22,8 @@ using PomodoroWebApp.Infrastructure.Config.Options;
 using PomodoroWebApp.Infrastructure.Data;
 using PomodoroWebApp.Infrastructure.Data.Repositories;
 using PomodoroWebApp.Infrastructure.Services;
+using Serilog;
+using Serilog.Events;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Text;
@@ -33,6 +37,7 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection ConfigureInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddLoggingConfiguration(configuration);
         services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddDataAccessInjections();
         services.AddServicesInjections();
@@ -42,6 +47,7 @@ public static class ServiceCollectionExtension
         services.AddDatabaseConfiguration(configuration);
         services.AddJwtAuthentication(configuration);
         services.AddSwagger();
+        services.AddCustomHealthChecks(configuration);
         //services.AddRedisConfiguration(configuration);
         //services.AddLoggingConfiguration();
         services.AddControllers(options =>
@@ -57,6 +63,44 @@ public static class ServiceCollectionExtension
         {
             option.GroupNameFormat = "'v'V";
             option.SubstituteApiVersionInUrl = true;
+        });
+
+        return services;
+    }
+    private static IServiceCollection AddCustomHealthChecks(this IServiceCollection services, IConfiguration configuration)
+    {
+        var sqlServerConfig = configuration.GetOptions<SqlServerConfig>("SqlServerConfig");
+
+        var healthChecksBuilder = services.AddHealthChecks();
+
+        healthChecksBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
+
+        if (!string.IsNullOrEmpty(sqlServerConfig.DefaultConnection))
+        {
+            healthChecksBuilder.AddSqlServer(sqlServerConfig.DefaultConnection, name: "sqlserver");
+        }
+
+        return services;
+    }
+
+    private static IServiceCollection AddLoggingConfiguration(this IServiceCollection services, IConfiguration configuration)
+    {
+        var serilogConfig = configuration.GetOptions<SerilogConfig>("SerilogConfig");
+        
+        Log.Logger = new LoggerConfiguration()
+         .MinimumLevel.Is(Enum.Parse<LogEventLevel>(serilogConfig.MinimumLevel))
+         .WriteTo.Console(outputTemplate: serilogConfig.ConsoleOutputTemplate)
+         .WriteTo.File(
+             path: serilogConfig.LogFilePath,
+             rollingInterval: RollingInterval.Day,
+             retainedFileCountLimit: serilogConfig.RetainedFileCountLimit,
+             outputTemplate: serilogConfig.FileOutputTemplate)
+         .CreateLogger();
+
+        services.AddLogging(loggingBuilder =>
+        {
+            loggingBuilder.ClearProviders();
+            loggingBuilder.AddSerilog(dispose: true);
         });
 
         return services;

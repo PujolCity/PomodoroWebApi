@@ -1,4 +1,6 @@
-﻿namespace PomodoroWebApp.Extensions;
+﻿using PomodoroWebApp.Infrastructure.Middlewares;
+
+namespace PomodoroWebApp.Extensions;
 
 /// <summary>
 /// Extensiones para la configuración del middleware de la aplicación.
@@ -7,6 +9,7 @@ public static class ApplicationBuilderExtension
 {
     public static IApplicationBuilder Configure(this IApplicationBuilder app)
     {
+        app.UseGlobalExceptionHandling();
         //app.UseHeaderPropagation();
         app.UseSwagger();
         app.UseSwaggerUI();

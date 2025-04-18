@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configurationBuilder = new ConfigurationBuilder()
               .SetBasePath(AppContext.BaseDirectory)
               .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
-.AddEnvironmentVariables();
+              .AddEnvironmentVariables();
 
 //var entorno = builder.Environment.EnvironmentName;
 //Console.WriteLine($"entorno : {entorno}");
@@ -21,5 +21,6 @@ services.ConfigureInfrastructure(configuration);
 configuration.GetOptions();
 builder.Services.AddUserValidators();
 var app = builder.Build();
+app.UseCustomHealthChecks();
 app.Configure();
 app.Run();
