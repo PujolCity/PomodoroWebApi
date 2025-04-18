@@ -7,7 +7,6 @@ using PomodoroWebApp.Domain.Interfaces.Services;
 using PomodoroWebApp.Domain.Models;
 using PomodoroWebApp.Domain.Results;
 using PomodoroWebApp.Domain.ValidatorMessages;
-using PomodoroWebApp.Extensions;
 
 namespace PomodoroWebApp.Controllers;
 
@@ -22,14 +21,17 @@ public class AuthController : ControllerBase
     private readonly IRegisterInteractor _registerInteractor;
     private readonly ILoginInteractor _loginInteractor;
     private readonly IAuthorizationTokenService _authorizationTokenService;
+    private readonly ILogger<AuthController> _logger;
 
     public AuthController(IRegisterInteractor registerInteractor,
         ILoginInteractor loginInteractor,
-        IAuthorizationTokenService authorizationTokenService)
+        IAuthorizationTokenService authorizationTokenService,
+        ILogger<AuthController> logger)
     {
         _registerInteractor = registerInteractor;
         _loginInteractor = loginInteractor;
         _authorizationTokenService = authorizationTokenService;
+        _logger = logger;
     }
 
     /// <summary>
@@ -37,15 +39,22 @@ public class AuthController : ControllerBase
     /// ATENCION: Este endpoint solo es para fines de prueba y no debe ser utilizado en producción.
     /// </summary>
     /// <returns></returns>
-    #if !DEBUG
-    [ApiExplorerSettings(IgnoreApi = true)]
-    #endif
+#if !DEBUG
+        [ApiExplorerSettings(IgnoreApi = true)]
+#endif
     [HttpGet("me")]
-    [OnlyInEnvironment("DESARROLLO")]
+    //[OnlyInEnvironment("DESARROLLO")]
     [ProducesResponseType(typeof(Dictionary<string, string>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(AppValidatorMessage), 401)]
     public IActionResult GetAllClaims()
     {
+        _logger.LogTrace("Este es un mensaje TRACE");
+        _logger.LogDebug("Este es un mensaje DEBUG");
+        _logger.LogInformation("Este es un mensaje INFO");
+        _logger.LogWarning("Este es un mensaje WARNING");
+        _logger.LogError("Este es un mensaje ERROR");
+        _logger.LogCritical("Este es un mensaje CRITICAL");
+
         var user = _authorizationTokenService.GetAllClaims();
 
         if (user == null)

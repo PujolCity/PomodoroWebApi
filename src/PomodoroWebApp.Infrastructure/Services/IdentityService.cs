@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using PomodoroWebApp.Domain.Entities;
 using PomodoroWebApp.Domain.Interfaces.Services;
@@ -21,6 +22,7 @@ namespace PomodoroWebApp.Infrastructure.Services;
 /// </summary>
 public class IdentityService : IIdentityService
 {
+    private readonly ILogger<IdentityService> _logger;
     private readonly UserManager<Usuario> _userManager;
     private readonly SignInManager<Usuario> _signInManager;
     private readonly IConfiguration _configuration;
@@ -30,13 +32,15 @@ public class IdentityService : IIdentityService
     public IdentityService(UserManager<Usuario> userManager,
         SignInManager<Usuario> signInManager,
         IConfiguration configuration,
-        PomodoroDbContext dbContext)
+        PomodoroDbContext dbContext,
+        ILogger<IdentityService> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _configuration = configuration;
         _dbContext = dbContext;
         _jwtConfig = _configuration.GetOptions<JwtConfig>("JwtConfig");
+        _logger = logger;
     }
 
     public async Task<Result<IdentityResult>> RegisterUserAsync(Usuario usuario, string password)
@@ -48,32 +52,51 @@ public class IdentityService : IIdentityService
             if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                _logger.LogError("Error al registrar usuario: {errors}", errors);
                 return Result<IdentityResult>.Fail($"Error al registrar usuario: {errors}");
             }
 
+            _logger.LogInformation("Usuario registrado exitosamente: {0}", usuario.UserName);
             return Result<IdentityResult>.Ok(result);
         }
         catch (Exception ex)
         {
+            _logger.LogError("Excepción al registrar usuario: {0}", ex);
             return Result<IdentityResult>.Fail($"Exception: {ex.Message}");
         }
     }
 
     public async Task<Result<Usuario>> AuthenticateAsync(string email, string password)
     {
+        _logger.LogInformation("** Usuario logueado exitosamente **");
+
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null || user.Baja)
+        {
+            _logger.LogInformation("Usuario no encontrado o dado de baja: {0}", email);
             return Result<Usuario?>.Fail(AppValidatorMessage.UserNotFoundError());
+        }
 
         var result = await _signInManager.CheckPasswordSignInAsync(user, password, lockoutOnFailure: false);
         if (!result.Succeeded)
+        {
+            _logger.LogInformation("Credenciales inválidas para el usuario: {0}", email);
             return Result<Usuario>.Fail(AppValidatorMessage.InvalidCredentialsError());
+        }
+
         return Result<Usuario>.Ok(user);
     }
 
     public async Task<Result<IdentityResult>> ChangePasswordAsync(Usuario usuario, string currentPassword, string newPassword)
     {
         var result = await _userManager.ChangePasswordAsync(usuario, currentPassword, newPassword);
+        if (!result.Succeeded)
+        {
+            _logger.LogError($"Error al cambiar la contraseña: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            return Result<IdentityResult>.Fail(AppValidatorMessage.ChangePassworError());
+        }
+
+        _logger.LogInformation($"Contraseña cambiada exitosamente para el usuario: {usuario.UserName}");
         return Result<IdentityResult>.Ok(result);
     }
 

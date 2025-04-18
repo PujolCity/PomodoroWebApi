@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using PomodoroWebApp.Application.Dto.Auth;
 using PomodoroWebApp.Domain.Entities;
-using PomodoroWebApp.Domain.Interfaces.Repositories;
 
 namespace PomodoroWebApp.Application.Validators;
 
@@ -12,7 +11,6 @@ namespace PomodoroWebApp.Application.Validators;
 public class RegisterRequestDTOValidator : AbstractValidator<RegisterRequestDTO>
 {
     private readonly UserManager<Usuario> _userManager;
-
 
     public RegisterRequestDTOValidator(UserManager<Usuario> userManager)
     {
@@ -50,7 +48,6 @@ public class RegisterRequestDTOValidator : AbstractValidator<RegisterRequestDTO>
                 .Matches("[a-z]").WithMessage("La contraseña debe contener al menos una letra minúscula.")
                 .Matches("[0-9]").WithMessage("La contraseña debe contener al menos un número.")
                 .Matches("[^a-zA-Z0-9]").WithMessage("La contraseña debe contener al menos un carácter especial (ej: !@#$%^&*).");
-        _userManager = userManager;
     }
 
     // Método opcional para validar el dominio del email (ejemplo: rechazar dominios temporales)

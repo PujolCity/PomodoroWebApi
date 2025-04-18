@@ -1,5 +1,6 @@
 ﻿namespace PomodoroWebApp.Domain.ValidatorMessages;
 using Domain.Results;
+using System;
 
 /// <summary>
 /// Clase que contiene mensajes de error para la validación de la aplicación.
@@ -13,4 +14,6 @@ public static class AppValidatorMessage
     public static ErrorMessage UserNotFoundError() => new("Usuario-004", $"No se encuentra el usuario");
     public static ErrorMessage InvalidCredentialsError() => new("Usuario-005", $"Credenciales invalidas");
     public static ErrorMessage InvalidTokenError() => new("Usuario-006", $"No se pudo encontrar el ID del usuario en el token.");
+    public static ErrorMessage ChangePassworError() => new("Usuario-007", $"Error al cambiar la contraseña");
+
 }
